@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\File;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::define('file-action', function (User $user, File $file)
+        {
+            return $user->id === $file->user_id;
+        });
     }
 }
