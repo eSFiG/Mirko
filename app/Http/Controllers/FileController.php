@@ -27,64 +27,60 @@ class FileController
         return response(['file_id' => $fileModel->id]);
     }
 
-    public function download(File $file_id)
+    public function download(File $file)
     {
-        if (!Gate::allows('file-action', $file_id)) {
+        if (!Gate::allows('file-action', $file)) {
             return response('It\'s not your file', 403);
         }
 
         $user = Auth::user();
-        $filePath = storage_path("app/attachments/{$user->id}/{$file_id->generated_name}");
+        $filePath = storage_path("app/attachments/{$user->id}/{$file->generated_name}");
         if (file_exists($filePath)) {
-            return response()->download($filePath, $file_id->original_name);
+            return response()->download($filePath, $file->original_name);
         }
-        else {
-            return response('File not found', 404);
-        }
+
+        return response('File not found', 404);
     }
 
-    public function update(File $file_id, FileRequest $request)
+    public function update(File $file, FileRequest $request)
     {
-        if (!Gate::allows('file-action', $file_id)) {
+        if (!Gate::allows('file-action', $file)) {
             return response('It\'s not your file', 403);
         }
 
         $user = Auth::user();
-        $file = $request->file('file');
+        $file_request = $request->file('file');
 
-        $filePath = storage_path("app/attachments/{$user->id}/{$file_id->generated_name}");
+        $filePath = storage_path("app/attachments/{$user->id}/{$file->generated_name}");
         if (file_exists($filePath)) {
-            if ($file_id->extension() != $file->getClientOriginalExtension()) {
+            if ($file->extension() != $file_request->getClientOriginalExtension()) {
                 return response('File extensions are different');
             }
 
-            $file->storeAs('attachments/'.$user->id, $file_id->generated_name);
-            $file_id->original_name = $file->getClientOriginalName();
-            $file_id->update();
+            $file_request->storeAs('attachments/'.$user->id, $file->generated_name);
+            $file->original_name = $file_request->getClientOriginalName();
+            $file->update();
 
             return response('File updated');
         }
-        else {
-            return response('File not found', 404);
-        }
+
+        return response('File not found', 404);
     }
 
-    public function delete(File $file_id)
+    public function delete(File $file)
     {
-        if (!Gate::allows('file-action', $file_id)) {
+        if (!Gate::allows('file-action', $file)) {
             return response('It\'s not your file', 403);
         }
 
         $user = Auth::user();
-        $filePath = storage_path("app/attachments/{$user->id}/{$file_id->generated_name}");
+        $filePath = storage_path("app/attachments/{$user->id}/{$file->generated_name}");
         if (file_exists($filePath)) {
             unlink($filePath);
-            $file_id->delete();
+            $file->delete();
             return response('File deleted');
         }
-        else {
-            return response('File not found', 404);
-        }
 
+        return response('File not found', 404);
     }
 }

@@ -13,7 +13,7 @@ Route::middleware('auth:api')->group(function ()
     Route::get('/information', [UserController::class, 'getInformation']);
 
     Route::post('/createFile', [FileController::class, 'create']);
-    Route::get('/downloadFile/{file_id}', [FileController::class, 'download']);
-    Route::post('/updateFile/{file_id}', [FileController::class, 'update']);
-    Route::delete('/deleteFile/{file_id}', [FileController::class, 'delete']);
+    Route::get('/downloadFile/{file}', [FileController::class, 'download']);
+    Route::post('/updateFile/{file}', [FileController::class, 'update']);
+    Route::delete('/deleteFile/{file}', [FileController::class, 'delete']);
 });

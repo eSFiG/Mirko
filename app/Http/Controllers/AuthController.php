@@ -33,8 +33,7 @@ class AuthController
 
             return response(['token' => $token]);
         }
-        else {
-            return response('Wrong email or password');
-        }
+
+        return response('Wrong email or password');
     }
 }
